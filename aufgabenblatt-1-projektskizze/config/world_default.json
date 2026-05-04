@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "seed": 20260427,
+
+  "grid": {
+    "width": 30,
+    "height": 20,
+    "default_capacity": 4
+  },
+
+  "obstacles": [
+    { "x": 10, "y": 5,  "w": 1, "h": 8 },
+    { "x": 18, "y": 12, "w": 4, "h": 1 }
+  ],
+
+  "nests": [
+    { "id": 0, "x": 2, "y": 10, "capacity": 9999 }
+  ],
+
+  "food": [
+    { "x": 27, "y":  3, "amount": 200 },
+    { "x": 25, "y": 17, "amount": 150 }
+  ],
+
+  "agents": {
+    "count": 50,
+    "spawn": "nest",
+    "initial_energy": 500,
+    "energy_max": 1000
+  },
+
+  "costs": {
+    "move":   1,
+    "pickup": 0,
+    "drop":   0,
+    "noop":   0,
+    "perceive": 0
+  },
+
+  "pheromones": {
+    "evaporation":     0.02,
+    "deposit_initial": 100.0,
+    "decay_per_step":  0.9,
+    "min_level":       0.001
+  },
+
+  "termination": {
+    "max_ticks": 5000,
+    "stop_when_food_zero": true
+  },
+
+  "logging": {
+    "level": "info",
+    "metrics_every": 10,
+    "trace_agents": [0, 1],
+    "output_dir": "runs"
+  }
+}

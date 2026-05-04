@@ -1,0 +1,57 @@
+%% Klassen-Diagramm Teil 2: Wertobjekte und Kommunikation.
+%% Inhalt: Wahrnehmung/Aktion zwischen Manager und Agent,
+%%         sowie die beiden Vererbungs-Hierarchien Item und Action.
+%% Strukturelle Komposition siehe Teil 1 (class-diagram.mmd).
+
+%%{init: {'theme':'default','themeVariables':{'fontSize':'18px'}}}%%
+classDiagram
+    direction LR
+
+    class AntAgent {
+        +decide(p : Perception) ActionRequest
+    }
+
+    class Perception {
+        +tick : int
+        +me : Cell
+        +neighbors : Map~Direction, Cell~
+        +at_nest : bool
+        +at_food : bool
+    }
+
+    class ActionRequest {
+        +agent_id : int
+        +action : Action
+    }
+
+    class Action
+    class Move {
+        +dir : Direction
+    }
+    class PickUp
+    class Drop
+    class NoOp
+
+    class Item
+    class Food {
+        +amount : int
+    }
+    class EnergySource {
+        +amount : int
+    }
+    class NestMarker {
+        +nest_id : int
+    }
+
+    Action <|-- Move
+    Action <|-- PickUp
+    Action <|-- Drop
+    Action <|-- NoOp
+
+    Item <|-- Food
+    Item <|-- EnergySource
+    Item <|-- NestMarker
+
+    AntAgent ..> Perception : reads
+    AntAgent ..> ActionRequest : produces
+    ActionRequest --> Action

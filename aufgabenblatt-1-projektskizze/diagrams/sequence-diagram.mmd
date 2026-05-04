@@ -1,0 +1,46 @@
+%% Sequenzdiagramm: ein einzelner Tick im SimulationManager.
+%% Liest sich von oben nach unten; Schleifen sind explizit als loop markiert.
+%% Die fuenf Phasen entsprechen Abschnitt 5 der Projektskizze.
+
+sequenceDiagram
+    autonumber
+    actor User
+    participant Mgr as SimulationManager
+    participant World as GridWorld
+    participant Ant as AntAgent (i)
+    participant Log as Logger
+
+    User->>Mgr: run(config_path)
+    Mgr->>Mgr: load + validate JSON, build world & agents
+
+    loop solange Stop-Bedingung false
+        Note over Mgr,Ant: --- Phase 1: apply_actions (first-come-first-serve) ---
+        loop fuer jeden Agenten i in Index-Reihenfolge
+            alt Aktion aus Vor-Tick anwendbar
+                Mgr->>World: Aktion ausfuehren (Move/PickUp/Drop)
+                Mgr->>Mgr: energy_i abziehen, ggf. Pheromon deponieren
+                Mgr->>Ant: Erfolgs-Nachricht in Eingabequeue
+            else nicht anwendbar (Kapazitaet/Energie/Hindernis)
+                Mgr->>Ant: Fehler-Nachricht (-> implizit NoOp)
+            end
+        end
+
+        Note over Mgr,Ant: --- Phase 2 + 3: sense -> reason -> act ---
+        loop fuer jeden lebenden Agenten i
+            Mgr->>World: at(pos_i), neighbors4(pos_i)
+            World-->>Mgr: Cell + 4 Nachbarn
+            Mgr->>Ant: Wahrnehmung (Items am Feld, Pheromone der Nachbarn)
+            Ant->>Ant: reason (probabilistisch-reaktiv)
+            Ant-->>Mgr: naechste Aktion in Actions-Queue
+        end
+
+        Note over Mgr,World: --- Phase 4: update_pheromones ---
+        Mgr->>World: forall cells: PheromoneVec.decay(rho)
+
+        Note over Mgr,Log: --- Phase 5: log_and_advance ---
+        Mgr->>Mgr: TickSnapshot (Aggregate)
+        Mgr->>Log: log_tick(snapshot)
+        Mgr->>Mgr: tick += 1
+    end
+
+    Mgr-->>User: ticks_run, summary path

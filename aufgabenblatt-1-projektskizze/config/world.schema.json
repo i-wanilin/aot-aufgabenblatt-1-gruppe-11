@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tu-berlin.de/aot/aufg1/world.schema.json",
+  "title": "AOT Aufgabenblatt 1 - World/Run Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "seed", "grid", "agents", "pheromones", "costs", "termination"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "grid": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "default_capacity"],
+      "properties": {
+        "width":            { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "height":           { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "default_capacity": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "obstacles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y"],
+        "properties": {
+          "x": { "type": "integer", "minimum": 0 },
+          "y": { "type": "integer", "minimum": 0 },
+          "w": { "type": "integer", "minimum": 1, "default": 1 },
+          "h": { "type": "integer", "minimum": 1, "default": 1 }
+        }
+      }
+    },
+    "nests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y"],
+        "properties": {
+          "id":       { "type": "integer", "minimum": 0 },
+          "x":        { "type": "integer", "minimum": 0 },
+          "y":        { "type": "integer", "minimum": 0 },
+          "capacity": { "type": "integer", "minimum": 1, "default": 9999 }
+        }
+      }
+    },
+    "food": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y", "amount"],
+        "properties": {
+          "x":      { "type": "integer", "minimum": 0 },
+          "y":      { "type": "integer", "minimum": 0 },
+          "amount": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "agents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "initial_energy"],
+      "properties": {
+        "count":          { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "spawn":          { "type": "string", "enum": ["nest", "random"], "default": "nest" },
+        "initial_energy": { "type": "integer", "minimum": 1 },
+        "energy_max":     { "type": "integer", "minimum": 1 }
+      }
+    },
+    "costs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["move"],
+      "properties": {
+        "move":     { "type": "integer", "minimum": 0 },
+        "pickup":   { "type": "integer", "minimum": 0, "default": 0 },
+        "drop":     { "type": "integer", "minimum": 0, "default": 0 },
+        "noop":     { "type": "integer", "minimum": 0, "default": 0 },
+        "perceive": { "type": "integer", "minimum": 0, "default": 0 }
+      }
+    },
+    "pheromones": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaporation", "deposit_initial", "decay_per_step"],
+      "properties": {
+        "evaporation":     { "type": "number", "minimum": 0, "maximum": 1 },
+        "deposit_initial": { "type": "number", "exclusiveMinimum": 0 },
+        "decay_per_step":  { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "min_level":       { "type": "number", "minimum": 0, "default": 0 }
+      }
+    },
+    "termination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_ticks"],
+      "properties": {
+        "max_ticks":           { "type": "integer", "minimum": 1 },
+        "stop_when_food_zero": { "type": "boolean", "default": false }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "level":         { "type": "string", "enum": ["debug", "info", "warn", "error"], "default": "info" },
+        "metrics_every": { "type": "integer", "minimum": 1, "default": 1 },
+        "trace_agents":  { "type": "array", "items": { "type": "integer", "minimum": 0 }, "default": [] },
+        "output_dir":    { "type": "string", "default": "runs" }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "id": 2228089,
+    "name": "Aufgabenblatt 1 - Projektskizze",
+    "slug": "aufgabenblatt-1-projektskizze",
+    "repo": "aot-aufgabenblatt-1-projektskizze",
+    "status": "solving",
+    "task_id": "task-e936222091ff",
+    "content_hash": "500d94f72cbb88ed",
+    "heuristic": "task",
+    "approval_msg_id": 26,
+    "posted_at": "2026-04-27T18:00:01+02:00",
+    "last_seen_at": "2026-04-30T12:00:01+02:00"
+  },
+  {
+    "id": 2228090,
+    "name": "Aufgabenblatt 1 - Review",
+    "slug": "aufgabenblatt-1-review",
+    "repo": "aot-aufgabenblatt-1-review",
+    "status": "pending_approval",
+    "task_id": null,
+    "content_hash": "75a11da44c802486",
+    "heuristic": "upload_slot",
+    "approval_msg_id": 27,
+    "posted_at": "2026-04-27T18:00:01+02:00",
+    "last_seen_at": "2026-04-30T12:00:01+02:00"
+  },
+  {
+    "id": 2314046,
+    "name": "Aufgabenblatt 1 - Projektdokumentation",
+    "slug": "aufgabenblatt-1-projektdokumentation",
+    "repo": "aot-aufgabenblatt-1-projektdokumentation",
+    "status": "pending_approval",
+    "task_id": null,
+    "content_hash": "75a11da44c802486",
+    "heuristic": "upload_slot",
+    "approval_msg_id": 28,
+    "posted_at": "2026-04-27T18:00:01+02:00",
+    "last_seen_at": "2026-04-30T12:00:01+02:00"
+  }
+]

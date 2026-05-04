@@ -1,0 +1,75 @@
+%% Klassen-Diagramm der Schwarmintelligenz-Simulation - Teil 1: Struktur
+%% Render-Hinweis: kompatibel mit Mermaid >= 10.6 (classDiagram).
+%% Lesen: einseitige Pfeile  ..>  = Abhaengigkeit / Aufruf (transient).
+%%        durchgezogen        -->  = Komposition (Eigentum).
+%%        offene Raute  o-- bzw. <|-- siehe Mermaid-Doku.
+%% Inhalt: Manager, Welt-Komposition (GridWorld/Cell/Pheromon),
+%%         Konfiguration, Logging, RNG. Wertobjekte / Aktionen /
+%%         Wahrnehmungen siehe Teil 2 (class-diagram-types.mmd).
+
+%%{init: {'theme':'default','themeVariables':{'fontSize':'18px'}}}%%
+classDiagram
+    direction LR
+
+    class SimulationManager {
+        -world : GridWorld
+        -agents : List~AntAgent~
+        -rng : RandomSource
+        -logger : Logger
+        -tick : int
+        +step() void
+        +run_until(stop : Predicate) int
+        -perceive() Map~AgentId, Perception~
+        -apply_actions(actions) void
+        -update_pheromones() void
+    }
+
+    class GridWorld {
+        +width : int
+        +height : int
+        +at(x:int, y:int) Cell
+        +neighbors4(x:int, y:int) List~Cell~
+        +in_bounds(x:int, y:int) bool
+    }
+
+    class Cell {
+        +x : int
+        +y : int
+        +capacity : int
+        +items : List~Item~
+        +pheromones : PheromoneVec
+        +is_obstacle() bool
+    }
+
+    class AntAgent {
+        +id : int
+        +position : Coord
+        +energy : int
+        +carrying : bool
+        +decide(p : Perception) ActionRequest
+    }
+
+    class Logger {
+        <<interface>>
+        +log_tick(snapshot : TickSnapshot) void
+        +log_event(name : String, payload : Map) void
+        +close() void
+    }
+
+    class ConfigLoader {
+        +load(path : Path) RunConfig
+        -validate(json : Json) void
+    }
+
+    class RandomSource {
+        +seed : long
+        +next_int(bound : int) int
+        +next_double() double
+    }
+
+    SimulationManager o-- GridWorld
+    SimulationManager o-- "n" AntAgent
+    SimulationManager --> Logger
+    SimulationManager --> RandomSource
+    SimulationManager --> ConfigLoader
+    GridWorld o-- "n*m" Cell
