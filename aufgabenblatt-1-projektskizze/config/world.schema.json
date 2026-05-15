@@ -95,10 +95,14 @@
       "additionalProperties": false,
       "required": ["evaporation", "deposit_initial", "decay_per_step"],
       "properties": {
-        "evaporation":     { "type": "number", "minimum": 0, "maximum": 1 },
-        "deposit_initial": { "type": "number", "exclusiveMinimum": 0 },
-        "decay_per_step":  { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
-        "min_level":       { "type": "number", "minimum": 0, "default": 0 }
+        "evaporation":         { "type": "number", "minimum": 0, "maximum": 1 },
+        "deposit_initial":     { "type": "number", "exclusiveMinimum": 0 },
+        "decay_per_step":      { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "min_level":           { "type": "number", "minimum": 0, "default": 0 },
+        "neg_deposit":         { "type": "number", "minimum": 0, "default": 0 },
+        "neg_evap_rate":       { "type": "number", "minimum": 0, "maximum": 1, "default": 0 },
+        "neg_weight":          { "type": "number", "minimum": 0, "default": 1 },
+        "expect_food_threshold": { "type": "number", "minimum": 0, "default": 0 }
       }
     },
     "termination": {

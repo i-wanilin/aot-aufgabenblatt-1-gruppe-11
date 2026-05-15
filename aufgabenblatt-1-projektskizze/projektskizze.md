@@ -23,17 +23,31 @@ Die Implementierung folgt in der Projektdokumentation.
 > bevorzugt die Kolonie die nähere?
 
 ### 2.2 Vermutung
-Wir erwarten, dass die nähere Quelle zuerst gefunden und stabil
-ausgebeutet wird, bevor sich Trails zur weiter entfernten Quelle
-etablieren — schlicht weil kürzere Trails weniger durch
-Pheromon­verdunstung verlieren.
+Wir erwarten zwei Effekte zugunsten der näheren Quelle: (i) sie wird
+früher gefunden (`t_first` kleiner) und (ii) sie liefert auch im
+weiteren Verlauf eine höhere mittlere Eintrags­rate ins Nest, da
+kürzere Trails weniger durch Pheromon­verdunstung verlieren. Punkt
+(ii) ist die eigentliche Aussage über die Rate und nicht bloß ein
+Vorsprung durch den früheren Fund.
 
 ### 2.3 Was wir messen
-Pro Lauf protokollieren wir, wann das erste Nahrungs­item aus jeder
-Quelle im Nest ankommt (`t_first(A)`, `t_first(B)`) und wie viel
-Nahrung im Zeitverlauf eingelagert wird. Wir variieren die Distanz
-der zweiten Quelle (`D₂ ∈ {12, 15, 20}` gegenüber `D₁ = 5`) und die
-Ameisenzahl (`N ∈ {10, 20, 30}`).
+Pro Lauf protokollieren wir je Quelle:
+
+* `t_first` – Tick, an dem das erste Item aus dieser Quelle im Nest
+  ankommt.
+* kumulative Menge der eingelagerten Items über die Zeit.
+* `r(t)` – gleitende Eintrags­rate (Items pro Tick in einem Fenster
+  von z. B. 50 Ticks) und als robuster Summen­wert `r̄_tail`, der
+  Mittelwert von `r(t)` über die zweite Hälfte des Laufs.
+
+Den Anfang des Laufs schließen wir bei `r̄_tail` bewusst aus, weil
+die Eintrags­rate während des Trail‑Aufbaus nicht stationär ist und
+systematisch wächst. Der Tail‑Mittelwert reflektiert die Rate im
+eingeschwungenen Zustand und ist damit das, was unsere Vermutung
+(ii) eigentlich behauptet.
+
+Wir variieren die Distanz der zweiten Quelle (`D₂ ∈ {12, 15, 20}`
+gegenüber `D₁ = 5`) und die Ameisenzahl (`N ∈ {10, 20, 30}`).
 
 ### 2.4 Nebenfrage
 Im Warmstart‑Experiment schauen wir zusätzlich, wie schnell sich ein
@@ -53,7 +67,7 @@ erwartet ist, dass die Kolonie relativ zügig zurückfindet.
 | **Manager**   | zentrale Instanz: Zeitsteuerung, Wahrnehmung, Konflikt­auflösung, Logging. |
 | **Tick**      | Diskreter Zeitschritt; jeder Agent führt **genau eine** Aktion aus.        |
 | **Item**      | Auf Feld liegendes Objekt: `Food`, `EnergySource`, `NestMarker`.           |
-| **Pheromon**  | Skalares Feldattribut (`nest`, `food`) mit Verdunstungsrate `ρ`.           |
+| **Pheromon**  | Skalares Feldattribut mit drei Kanälen (`nest`, `food`, `neg`), jeweils eigene Verdunstungsrate `ρ`. |
 
 ### 3.2 Klassen­diagramm
 Siehe [`diagrams/class-diagram.mmd`](./diagrams/class-diagram.mmd) (Struktur)
@@ -121,6 +135,20 @@ der Manager rahmt das mit Aktions­ausführung und Pheromon‑Verdunstung ein.
 | 3 | `reason → act`       | Agent             | Agent entscheidet probabilistisch‑reaktiv und legt seine nächste Aktion in die `Actions`‑Queue des Managers. |
 | 4 | `update_pheromones`  | Manager           | `evaporate(ρ)` für alle Felder. |
 | 5 | `log_and_advance`    | Manager / Logger  | Tick‑Metriken schreiben, `tick++`. |
+
+### 5.1 Bewegungs- und Depositionsregeln (Detail zu Zeile 3)
+Auf Futtersuche wählt eine Ameise die nächste Nachbarzelle gewichtet
+nach `score(cell) = w_food · food − w_neg · neg`; auf dem Rückweg
+folgt sie analog dem Nest‑Pheromon. Die `neg`-Komponente dämpft
+Zellen auf bereits abgegrasten Trails.
+
+Ankunfts­regel für das Negativ‑Pheromon: Erreicht eine Ameise eine
+Zelle, an der sie Futter erwartet hatte (`food` über Schwellwert),
+findet dort aber keines vor, so deponiert sie auf dem Rückweg
+zusätzlich Negativ‑Pheromon entlang ihres Pfads. Ein erschöpfter
+Trail wird dadurch schneller entwertet als allein durch Verdunstung
+— ohne dass die Ameisen globales Wissen über den Zustand der Quelle
+benötigen.
 
 ---
 
