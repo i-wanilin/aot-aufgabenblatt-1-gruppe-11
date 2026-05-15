@@ -1,0 +1,214 @@
+{
+  "title": "AOT Aufgabenblatt 1 - World/Run Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "seed", "grid", "nests", "food", "agents", "pheromones", "costs", "termination"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "comment":        { "type": "string" },
+    "seed":           { "type": "integer", "minimum": 0 },
+
+    "grid": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "default_capacity"],
+      "properties": {
+        "width":            { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "height":           { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "default_capacity": { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "obstacles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y"],
+        "properties": {
+          "x": { "type": "integer", "minimum": 0 },
+          "y": { "type": "integer", "minimum": 0 },
+          "w": { "type": "integer", "minimum": 1, "default": 1 },
+          "h": { "type": "integer", "minimum": 1, "default": 1 }
+        }
+      }
+    },
+
+    "dynamic_obstacles": {
+      "description": "Rectangles that block their cells only during a scheduled tick interval. Any ant standing on a cell when the obstacle appears is killed. A cell covered by multiple active dynamic obstacles only unblocks when the last one disappears.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y", "appears_at", "disappears_at"],
+        "properties": {
+          "x":              { "type": "integer", "minimum": 0 },
+          "y":              { "type": "integer", "minimum": 0 },
+          "w":              { "type": "integer", "minimum": 1, "default": 1 },
+          "h":              { "type": "integer", "minimum": 1, "default": 1 },
+          "appears_at":     { "type": "integer", "minimum": 1 },
+          "disappears_at":  { "type": "integer", "minimum": 1 }
+        }
+      },
+      "default": []
+    },
+
+    "nests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y"],
+        "properties": {
+          "id":       { "type": "integer", "minimum": 0 },
+          "x":        { "type": "integer", "minimum": 0 },
+          "y":        { "type": "integer", "minimum": 0 },
+          "capacity": { "type": "integer", "minimum": 1, "default": 9999 }
+        }
+      }
+    },
+
+    "food": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y", "amount"],
+        "properties": {
+          "id":     { "type": "integer", "minimum": 0 },
+          "x":      { "type": "integer", "minimum": 0 },
+          "y":      { "type": "integer", "minimum": 0 },
+          "amount": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+
+    "agents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "initial_energy"],
+      "properties": {
+        "count":          { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "spawn":          { "type": "string", "enum": ["nest", "random"], "default": "nest" },
+        "initial_energy": { "type": "integer", "minimum": 1 },
+        "energy_max":     { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "costs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["move"],
+      "properties": {
+        "move":     { "type": "integer", "minimum": 0 },
+        "pickup":   { "type": "integer", "minimum": 0, "default": 0 },
+        "drop":     { "type": "integer", "minimum": 0, "default": 0 },
+        "noop":     { "type": "integer", "minimum": 0, "default": 0 },
+        "perceive": { "type": "integer", "minimum": 0, "default": 0 }
+      }
+    },
+
+    "pheromones": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaporation", "deposit_initial", "decay_per_step"],
+      "properties": {
+        "evaporation":           { "type": "number", "minimum": 0, "maximum": 1 },
+        "deposit_initial":       { "type": "number", "exclusiveMinimum": 0 },
+        "decay_per_step":        { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "min_level":             { "type": "number", "minimum": 0, "default": 0 },
+        "neg_deposit":           { "type": "number", "minimum": 0, "default": 0 },
+        "neg_evap_rate":         { "type": "number", "minimum": 0, "maximum": 1, "default": 0 },
+        "neg_weight":            { "type": "number", "minimum": 0, "default": 1 },
+        "expect_food_threshold": { "type": "number", "minimum": 0, "default": 0 }
+      }
+    },
+
+    "movement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "epsilon":     { "type": "number", "minimum": 0, "maximum": 1, "default": 0.05 },
+        "w_food":      { "type": "number", "minimum": 0, "default": 1.0 },
+        "w_nest":      { "type": "number", "minimum": 0, "default": 1.0 }
+      }
+    },
+
+    "warm_start": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["channel", "x", "y", "level"],
+            "properties": {
+              "channel": { "type": "string", "enum": ["nest", "food", "neg"] },
+              "x":       { "type": "integer", "minimum": 0 },
+              "y":       { "type": "integer", "minimum": 0 },
+              "level":   { "type": "number", "exclusiveMinimum": 0 }
+            }
+          },
+          "default": []
+        },
+        "lines": {
+          "description": "Convenience: expand a straight Bresenham line from start to end with a linear pheromone gradient from level_at_start to level_at_end. Useful for seeding established trails without listing every cell.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["channel", "start", "end", "level_at_start", "level_at_end"],
+            "properties": {
+              "channel":        { "type": "string", "enum": ["nest", "food", "neg"] },
+              "start":          { "type": "array", "items": {"type":"integer", "minimum": 0}, "minItems": 2, "maxItems": 2 },
+              "end":            { "type": "array", "items": {"type":"integer", "minimum": 0}, "minItems": 2, "maxItems": 2 },
+              "level_at_start": { "type": "number", "minimum": 0 },
+              "level_at_end":   { "type": "number", "minimum": 0 }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+
+    "perturbations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pheromone_outage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["start_tick", "length"],
+          "properties": {
+            "start_tick": { "type": "integer", "minimum": 0 },
+            "length":     { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+
+    "termination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_ticks"],
+      "properties": {
+        "max_ticks":           { "type": "integer", "minimum": 1 },
+        "stop_when_food_zero": { "type": "boolean", "default": false }
+      }
+    },
+
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "metrics_every":     { "type": "integer", "minimum": 1, "default": 1 },
+        "snapshot_every":    { "type": "integer", "minimum": 1, "default": 200 },
+        "output_dir":        { "type": "string", "default": "runs" }
+      }
+    }
+  }
+}

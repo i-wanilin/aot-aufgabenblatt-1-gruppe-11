@@ -3,3 +3,11 @@ __pycache__/
 .idea/
 .vscode/
 .DS_Store
+
+# Python virtualenv (reproducible from README install command)
+.venv/
+venv/
+
+# Simulator output (regenerable; large per-run snapshots)
+code/runs/
+code/plots/

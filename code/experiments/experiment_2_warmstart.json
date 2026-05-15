@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "comment": "Experiment 2 / warmstart only: same world as the coldstart run but with a pre-seeded food-pheromone trail along y=7 from the nest to the food source, and a complementary nest-pheromone trail in the reverse direction. The colony should start collecting much sooner. Control run that isolates the warm-start effect from the recovery-after-outage effect.",
+  "seed": 20260520,
+  "grid": {
+    "width": 25,
+    "height": 15,
+    "default_capacity": 4
+  },
+  "obstacles": [
+    {
+      "x": 9,
+      "y": 4,
+      "w": 1,
+      "h": 3
+    },
+    {
+      "x": 9,
+      "y": 9,
+      "w": 1,
+      "h": 3
+    }
+  ],
+  "nests": [
+    {
+      "id": 0,
+      "x": 5,
+      "y": 7,
+      "capacity": 9999
+    }
+  ],
+  "food": [
+    {
+      "id": 0,
+      "x": 15,
+      "y": 7,
+      "amount": 300
+    }
+  ],
+  "agents": {
+    "count": 20,
+    "spawn": "nest",
+    "initial_energy": 1000,
+    "energy_max": 1000
+  },
+  "costs": {
+    "move": 1,
+    "pickup": 0,
+    "drop": 0,
+    "noop": 0
+  },
+  "pheromones": {
+    "evaporation": 0.02,
+    "deposit_initial": 100.0,
+    "decay_per_step": 0.92,
+    "min_level": 0.001,
+    "neg_deposit": 5.0,
+    "neg_evap_rate": 0.02,
+    "neg_weight": 1.0,
+    "expect_food_threshold": 5.0
+  },
+  "movement": {
+    "epsilon": 0.08,
+    "w_food": 1.0,
+    "w_nest": 1.0
+  },
+  "warm_start": {
+    "lines": [
+      {
+        "channel": "food",
+        "start": [
+          14,
+          7
+        ],
+        "end": [
+          6,
+          7
+        ],
+        "level_at_start": 90.0,
+        "level_at_end": 8.0
+      },
+      {
+        "channel": "nest",
+        "start": [
+          6,
+          7
+        ],
+        "end": [
+          14,
+          7
+        ],
+        "level_at_start": 90.0,
+        "level_at_end": 8.0
+      }
+    ]
+  },
+  "termination": {
+    "max_ticks": 3000,
+    "stop_when_food_zero": false
+  },
+  "logging": {
+    "metrics_every": 5,
+    "snapshot_every": 250,
+    "output_dir": "runs"
+  }
+}

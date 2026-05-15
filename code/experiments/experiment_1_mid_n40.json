@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "comment": "Experiment 1 / population sweep at N=40, distance 'mid' (D1=5, D2=15). Same topology as experiment_1_mid.json (N=20); only the colony size changes. Together with experiment_1_mid.json the two variants give a clean 2-point comparison of how doubling the colony affects t_first and tail exploitation.",
+  "seed": 20260515,
+  "grid": {
+    "width": 30,
+    "height": 20,
+    "default_capacity": 4
+  },
+  "obstacles": [
+    {
+      "x": 13,
+      "y": 4,
+      "w": 1,
+      "h": 5
+    },
+    {
+      "x": 13,
+      "y": 11,
+      "w": 1,
+      "h": 5
+    }
+  ],
+  "nests": [
+    {
+      "id": 0,
+      "x": 5,
+      "y": 10,
+      "capacity": 9999
+    }
+  ],
+  "food": [
+    {
+      "id": 0,
+      "x": 10,
+      "y": 10,
+      "amount": 200
+    },
+    {
+      "id": 1,
+      "x": 20,
+      "y": 10,
+      "amount": 200
+    }
+  ],
+  "agents": {
+    "count": 40,
+    "spawn": "nest",
+    "initial_energy": 1000,
+    "energy_max": 1000
+  },
+  "costs": {
+    "move": 1,
+    "pickup": 0,
+    "drop": 0,
+    "noop": 0
+  },
+  "pheromones": {
+    "evaporation": 0.02,
+    "deposit_initial": 100.0,
+    "decay_per_step": 0.92,
+    "min_level": 0.001,
+    "neg_deposit": 5.0,
+    "neg_evap_rate": 0.02,
+    "neg_weight": 1.0,
+    "expect_food_threshold": 5.0
+  },
+  "movement": {
+    "epsilon": 0.08,
+    "w_food": 1.0,
+    "w_nest": 1.0
+  },
+  "termination": {
+    "max_ticks": 4000,
+    "stop_when_food_zero": false
+  },
+  "logging": {
+    "metrics_every": 5,
+    "snapshot_every": 250,
+    "output_dir": "runs"
+  }
+}
